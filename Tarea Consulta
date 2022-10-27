@@ -1,67 +1,348 @@
 ## Tarea de Consulta 
 ### Erick Adrian Garza Tamez
 
-Para esta tarea aplicamos funciones estadisticas con **lenguaje R**
+Para esta tarea aplicamos funciones estadisticas con **POSTGRESS*
 Una vez cargada nuestra base de datos aplicamos los siguientes resultados:  
-#### Calculo de Frecuencia de Empresas por Estado
+#### Calculo de Frecuencia de Empresas por Tamaño
 ~~~
-emp_nl <- as.data.frame(table(general$ubicación))
-print(emp_nl)
+SELECT tamano, COUNT(*) AS freq
+FROM empresa
+GROUP BY tamano
+ORDER BY freq DESC;
 ~~~  
 ~~~
-> print(emp_nl)
-                  Var1 Freq
-1       Aguascalientes    8
-2      Baja California    8
-3  Baja California Sur    9
-4             Campeche   10
-5              Chiapas    9
-6            Chihuahua   16
-7             Coahuila    3
-8               Colima    7
-9     Distrito Federal   17
-10             Durango    6
-11          Guanajuato    7
-12            Guerrero    6
-13             Hidalgo   10
-14             Jalisco   17
-15              México    8
-16           Michoacán    8
-17             Morelos    6
-18             Nayarit    8
-19          Nuevo León    8
-20              Oaxaca   10
-21              Puebla    5
-22           Querétaro    5
-23        Quintana Roo    9
-24     San Luis Potosí   10
-25             Sinaloa    9
-26              Sonora   12
-27             Tabasco    9
-28          Tamaulipas    5
-29            Tlaxcala   10
-30            Veracruz   11
-31             Yucatán    5
-32           Zacatecas    9
+"tamano"	"freq"
+"Micro"	147
+"Pequeña"	100
+"Mediana"	19
+"Grande"	14
 ~~~  
 
-#### Calculo de caracteres minimos y maximos de los nombres de las empresas como tambien la mediana y cuantiles
+#### Calculo del Estado con mayor cantidad de Empresas (MAXIMO)
 ~~~
-x <- c(general$nombre)
-nombres <- (str_length(x))
-summary(nombres)
+SELECT estado, COUNT(*) AS freq
+FROM empresa
+GROUP BY estado
+ORDER BY freq DESC
+LIMIT 1;
 ~~~  
 ~~~
-Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    7.0    12.0    15.5    15.7    20.0    20.0 
+"Jalisco"	17
 ~~~  
-#### Calculo de la moda de los Estados de las Empresas
+#### Calculo del Estado con menor cantidad de Empresas (MINIMO)
 ~~~
-mfv(general$ubicación)
+SELECT estado, COUNT(*) AS freq
+FROM empresa
+GROUP BY estado
+ORDER BY freq ASC
+LIMIT 1;
 ~~~  
 ~~~
-"Distrito Federal" "Jalisco" 
+"Coahuila"	3
+~~~ 
+
+#### Calculo la Moda por Estado
+~~~
+SELECT mode() 
+WITHIN GROUP (ORDER BY estado) AS mode_estado
+FROM empresa;
 ~~~  
+~~~
+"Distrito Federal"
+~~~ 
+
+#### Tabla de Cuartiles para la utilidad de las empresas
+~~~
+SELECT mode() 
+SELECT utilidad,NTILE(4) OVER (PARTITION BY utilidad ORDER BY utilidad) AS Quartile
+from profitloss;
+~~~ 
+~~~
+"utilidad"	"quartile"
+-110969	1
+-109172	1
+-78164	1
+-59610	1
+-42196	1
+-40814	1
+-34961	1
+-34703	1
+-34620	1
+-34494	1
+-33753	1
+-33680	1
+-33624	1
+-33531	1
+-33068	1
+-33038	1
+-32680	1
+-31800	1
+-31336	1
+-31120	1
+-30493	1
+-28056	1
+-27200	1
+-25847	1
+-25811	1
+-25115	1
+-24991	1
+-24949	1
+-24083	1
+-23442	1
+-21661	1
+-21417	1
+-20924	1
+-20858	1
+-20682	1
+-20503	1
+-19939	1
+-19644	1
+-19397	1
+-19353	1
+-19149	1
+-18953	1
+-18846	1
+-18842	1
+-18140	1
+-18131	1
+-18040	1
+-17585	1
+-17469	1
+-17292	1
+-17159	1
+-17007	1
+-17000	1
+-16794	1
+-16509	1
+-16423	1
+-16106	1
+-16000	1
+-15907	1
+-15786	1
+-15341	1
+-15197	1
+-14586	1
+-14527	1
+-14469	1
+-14408	1
+-14127	1
+-13868	1
+-13751	1
+-13721	1
+-13391	1
+-12863	1
+-12403	1
+-12067	1
+-12013	1
+-11733	1
+-11630	1
+-11584	1
+-11564	1
+-11303	1
+-10574	1
+-10307	1
+-10226	1
+-10117	1
+-10099	1
+-9397	1
+-9276	1
+-8785	1
+-8444	1
+-8392	1
+-8111	1
+-7800	1
+-7739	1
+-7609	1
+-7606	1
+-7264	1
+-6780	1
+-6384	1
+-6016	1
+-6001	1
+-5838	1
+-5737	1
+-5594	1
+0	1
+0	1
+0	1
+0	1
+0	1
+0	1
+0	1
+0	1
+0	1
+0	1
+0	1
+0	1
+0	1
+0	2
+0	2
+0	2
+0	2
+0	2
+0	2
+0	2
+0	2
+0	2
+0	2
+0	2
+0	2
+0	2
+0	3
+0	3
+0	3
+0	3
+0	3
+0	3
+0	3
+0	3
+0	3
+0	3
+0	3
+0	3
+0	3
+0	4
+0	4
+0	4
+0	4
+0	4
+0	4
+0	4
+0	4
+0	4
+0	4
+0	4
+0	4
+0	4
+15835	1
+16546	1
+16946	1
+17071	1
+17300	1
+18814	1
+19010	1
+19384	1
+19448	1
+19574	1
+19729	1
+20354	1
+20649	1
+21135	1
+21201	1
+21911	1
+23056	1
+23392	1
+23498	1
+24779	1
+25126	1
+25158	1
+25646	1
+26275	1
+26917	1
+27001	1
+27214	1
+27275	1
+28191	1
+28215	1
+28608	1
+28680	1
+28806	1
+30010	1
+30560	1
+30620	1
+31338	1
+32173	1
+32215	1
+32405	1
+32427	1
+32529	1
+32570	1
+33210	1
+33222	1
+33360	1
+33660	1
+34109	1
+35118	1
+35308	1
+35448	1
+35583	1
+36151	1
+36810	1
+36940	1
+36956	1
+37437	1
+37944	1
+38534	1
+39099	1
+39165	1
+39504	1
+39536	1
+39741	1
+40799	1
+41137	1
+41611	1
+43039	1
+43605	1
+45339	1
+45590	1
+45846	1
+46144	1
+48513	1
+49401	1
+49433	1
+50075	1
+50825	1
+51201	1
+52082	1
+52816	1
+53689	1
+55036	1
+56763	1
+57655	1
+60623	1
+62539	1
+63112	1
+64294	1
+65136	1
+65158	1
+65433	1
+65647	1
+66028	1
+66357	1
+67665	1
+68018	1
+69066	1
+69486	1
+70424	1
+72475	1
+75044	1
+75804	1
+76920	1
+78864	1
+79462	1
+81799	1
+82608	1
+109841	1
+127630	1
+138397	1
+144811	1
+153076	1
+157957	1
+158807	1
+172101	1
+186070	1
+205646	1
+226417	1
+236025	1
+262440	1
+276123	1
+303954	1
+324920	1
+494598	1
+~~~ 
+
+
+
 
 ## Conclusiones
-He tenido problemas con mysql por lo que ocuidi al lenguaje de progración R, aun asi tuve que descargar librerias que desconocía como las que utilice para sacar la moda, sin duda es una gran herramienta estadistica que me gustaría seguir usando
+El uso de sql es muy util para explorar los datos, sin embargo, para interactuar con los datos para su uso estadistico prefiero usar otros lengaujes como R dado a que estoy mas familiarizado con sus funciones y herramientas estadisticas.
